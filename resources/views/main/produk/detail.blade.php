@@ -27,7 +27,8 @@
                         <!-- Widget search -->
                         <div class="widget-box">
                             <h4>{{ $produk->judul }}</h4>
-                            <p><b>Kategori : </b>{{ $produk->kategori->nama }}</p>
+                            <p><b>Kategori : </b>{{ $produk->kategori->nama }} <br>Rp. {{ number_format($produk->harga) }}
+                            </p>
                             <div class="post-date">Deskripsi:
                                 <p>{!! $produk->deskripsi !!}</p>
                             </div>

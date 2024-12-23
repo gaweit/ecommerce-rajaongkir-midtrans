@@ -84,11 +84,7 @@ class ProdukController extends Controller
 
         // Menghasilkan kode unik
         $kodeUnik = $this->generateUniqueCode('ORDER', 8);
-        $origin = 151;
-        $destination = 156;
-        $weight = 1700;
-        $courier = 'jne';
-        $ongkir = $this->getOngkir($origin, $destination, $weight, $courier);
+        // $ongkir = $this->getOngkir($origin, $destination, $weight, $courier);
         $asalkota = $this->getAsalKota();
         // dd($asalkota);
         $kota = $this->getKota();
@@ -129,43 +125,58 @@ class ProdukController extends Controller
 
         return $code;
     }
-
-    function processOrder(Request $request)
+    public function processOrder(Request $request)
     {
+        // Validasi input yang diterima
         $request->validate([
             'kode' => 'required',
-            'ekspedisi_id' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'kota_id' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'produk_id' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'user_id' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'jumlah_order' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'total' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'status' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'alamat' => 'required', // Sesuaikan dengan kebutuhan validasi
-            'metode' => 'required', // Sesuaikan dengan kebutuhan validasi
+            'destination' => 'required', // Tujuan pengiriman (ID kota tujuan)
+            'weight' => 'required', // Berat barang (gram)
+            'courier' => 'required', // Ekspedisi (kurir)
+            'produk_id' => 'required', // ID produk yang dipesan
+            'user_id' => 'required', // ID pengguna yang memesan
+            'jumlah_order' => 'required', // Jumlah produk yang dipesan
+            'status' => 'required', // Status pesanan (pending, confirmed, etc.)
+            'alamat' => 'required', // Alamat pengiriman
         ]);
 
-        $produk = new Order;
-        $produk->kode = $request->kode; // Sesuaikan dengan atribut yang sesuai
-        $produk->ekspedisi_id = $request->ekspedisi_id; // Sesuaikan dengan atribut yang sesuai
-        $produk->kota_id = $request->kota_id; // Sesuaikan dengan atribut yang sesuai
-        $produk->produk_id = $request->produk_id; // Sesuaikan dengan atribut yang sesuai
-        $produk->user_id = $request->user_id; // Sesuaikan dengan atribut yang sesuai
-        $produk->jumlah_order = $request->jumlah_order;
-        $produk->total = $request->total;
-        $produk->alamat = $request->alamat;
-        $produk->metode = $request->metode;
-        $produk->status = $request->status;
-        $produk->transfer = $request->transfer->store('transfer', 'public');
-        $produk->save();
+        // Ambil produk berdasarkan ID yang dipilih
+        $produk = Produk::find($request->produk_id);
+        // Hitung total berat berdasarkan jumlah produk yang dipesan
+        $totalBerat = $request->weight; // Berat total (gram)
+        $origin = 206; // Berat total (gram)
 
-        if ($produk->save()) {
-            return redirect('main/riwayat')->with("success", "Pemesanan Berhasil Di tambahkan ");
-            // dd($produk);
+        // Ambil biaya ongkir menggunakan API RajaOngkir
+        $ongkir = $this->getOngkir($origin, $request->destination, $totalBerat, $request->courier);
+
+        // Ambil biaya ongkir terendah
+        $biayaOngkir = $ongkir[0]['cost'][0]['value']; // Misalnya, menggunakan biaya pertama
+
+        // Simpan data pemesanan ke tabel 'order'
+        $order = new Order;
+        $order->kode = $request->kode;
+        $order->origin = $origin; // Kota asal pengiriman
+        $order->destination = $request->destination; // Kota tujuan pengiriman
+        $order->weight = $totalBerat; // Berat total barang dalam gram
+        $order->courier = $request->courier; // Ekspedisi (kurir)
+        $order->ongkirnya = $biayaOngkir; // Ekspedisi (kurir)
+        $order->produk_id = $request->produk_id; // ID produk yang dipesan
+        $order->user_id = $request->user_id; // ID pengguna yang memesan
+        $order->jumlah_order = $request->jumlah_order; // Jumlah produk yang dipesan
+        $order->alamat = $request->alamat; // Alamat pengiriman
+        $order->status = $request->status; // Status pemesanan (pending, confirmed, etc.)
+        $order->total = $produk->harga * $request->jumlah_order + $biayaOngkir; // Total harga produk + ongkir
+        $order->save();
+
+        // Jika pemesanan berhasil disimpan
+        if ($order->save()) {
+            return redirect('main/riwayat')->with("success", "Pemesanan Berhasil Ditambahkan!");
         } else {
-            return redirect()->back()->withInput()->withErrors("Something Error !");
+            // Jika terjadi error saat penyimpanan
+            return redirect()->back()->withInput()->withErrors("Terjadi kesalahan!");
         }
     }
+
     public function getAsalKota()
     {
         $client = new Client(['verify' => false]); // Abaikan verifikasi SSL

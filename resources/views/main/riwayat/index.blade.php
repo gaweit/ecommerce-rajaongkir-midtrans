@@ -36,13 +36,12 @@
                     <tr>
                         <th>No</th>
                         <th>Kode</th>
-                        <th>Nama </th>
                         <th>Produk</th>
                         <th>Jumlah</th>
                         <th>Harga</th>
-                        <th>Ongkir/Kg</th>
-                        <th>Total</th>
-                        <th>Metode</th>
+                        <th>Ongkir</th>
+                        <th>Total Bayar</th>
+                        <th>Kurir</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -52,13 +51,12 @@
                         <tr>
                             <td style="text-align: center">{{ $index + 1 }}</td>
                             <td>{{ $item->kode }}</td>
-                            <td>{{ $item->user->name }}</td>
                             <td>{{ $item->produk->judul }}</td>
-                            <td>{{ $item->jumlah_order }} Kg</td>
-                            <td>Rp.{{ $item->produk->harga }}</td>
-                            <td>Rp.{{ number_format($item->kota->biaya_ongkir) }}</td>
-                            <td>Rp.{{ $item->total }}</td>
-                            <td>{{ $item->metode }}</td>
+                            <td>{{ $item->jumlah_order }}</td>
+                            <td>Rp.{{ number_format($item->produk->harga) }}</td>
+                            <td>Rp.{{ number_format($item->ongkirnya) }}</td>
+                            <td>Rp.{{ number_format($item->total) }}</td>
+                            <td style="text-transform: uppercase">{{ $item->courier }}</td>
                             <td>{{ $item->status }}</td>
                             <td>
                                 @if ($item->status == 'Diproses' || $item->status == 'Dikirim')
@@ -66,6 +64,7 @@
                                 @elseif ($item->status == 'Diterima')
                                     <a class="btn btn-info" href="#">Selesai</a>
                                 @else
+                                    <a class="btn btn-warning" href="/main/riwayat/{{ $item->id }}/edit">Bayar </a>
                                     <form action="{{ route('riwayat.destroy', $item->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf

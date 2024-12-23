@@ -71,20 +71,6 @@
                                                         id="jumlah" oninput="updateTotal()" required>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label class="label">Pengiriman Dari</label>
-                                                    <select name="origin" id="origin" class="form-control" disabled>
-                                                        @foreach ($cities as $city)
-                                                            <!-- Ganti $asalkota dengan $cities -->
-                                                            <option value="{{ $city['city_name'] }}"
-                                                                {{ $city['city_id'] == $defaultCity['city_id'] ? 'selected' : '' }}>
-                                                                {{ $city['city_name'] }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
 
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -93,7 +79,7 @@
                                                         onchange="updateOngkir()">
                                                         <option value=""></option>
                                                         @foreach ($kota as $item)
-                                                            <option value="{{ $item['city_name'] }}">
+                                                            <option value="{{ $item['city_id'] }}">
                                                                 {{ $item['city_name'] }}</option>
                                                         @endforeach
                                                     </select>
@@ -112,62 +98,17 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label">Biaya Ongkir</label>
-                                                    <input type="text" class="form-control" id="ongkir"
-                                                        value="0" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label">Total Bayar = Harga Produk + Biaya
-                                                        Ongkir.</label>
-                                                    Rp.
-                                                    <input type="text" class="form-control" name="total"
-                                                        id="total" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label">Metode Transaksi</label>
-                                                    <select name="metode" id="metode" class="form-control">
-                                                        <option value=""></option>
-                                                        <option value="QRIS">QRIS</option>
-                                                        <option value="TRANSFER">TRANSFER</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- Bukti Transfer -->
-                                            <div class="col-md-12" id="buktiTransferDiv" style="display:none;">
-                                                <!-- Hidden by default -->
-                                                @foreach ($norek as $item)
-                                                    <div class="form-group col-md-12">
-                                                        <label class="label">Nomor Rekening</label>
-                                                        <input type="text"
-                                                            value="{{ $item->icon }} : {{ $item->deskripsi }}"
-                                                            class="form-control" readonly disabled>
-                                                    </div>
-                                                @endforeach
-                                                <div class="form-group">
-                                                    <label class="label">Bukti Transfer</label>
-                                                    <input type="file" name="transfer" id="transfer"
-                                                        class="form-control">
-                                                </div>
-                                            </div>
-
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <input type="hidden" class="form-control" name="produk_id"
                                                         id="produk_id" value="{{ $produk->id }}" readonly>
-                                                    <input type="hidden" class="form-control" name="status"
-                                                        id="status" value="Pending" readonly>
+                                                    <input type="hidden" class="form-control" name="status" id="status"
+                                                        value="Pending" readonly>
                                                     <input type="hidden" class="form-control" name="user_id"
                                                         id="user_id" value="{{ auth()->user()->id }}" readonly>
 
                                                     <input type="hidden" class="form-control" name="weight"
-                                                        value="1500">
+                                                        value="1">
                                                     <input type="submit" value="Order Sekarang" class="btn btn-primary">
                                                     <div class="submitting"></div>
                                                 </div>

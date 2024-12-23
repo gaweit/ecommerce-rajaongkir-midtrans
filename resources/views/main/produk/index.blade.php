@@ -63,7 +63,8 @@
                                 <h5 class="post-title"><a
                                         href="{{ url('main/produk/' . $item->slug) }}">{{ $item->judul }}</a>
                                 </h5>
-                                <span><b>Kategori : </b>{{ $item->kategori->nama }}</span>
+                                <span><b>Kategori : </b>{{ $item->kategori->nama }} <br>
+                                    Rp. {{ number_format($item->harga) }}</span>
                                 <div class="post-date">Posted on
                                     <span>{{ date('d-m-Y', strtotime($item->updated_at)) }}</span>
                                 </div>
