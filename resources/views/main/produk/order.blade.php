@@ -66,40 +66,57 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label class="label">Ekspedisi</label>
-                                                    <select name="ekspedisi_id" id="ekspedisi" class="form-control">
-                                                        @foreach ($ekspedisi as $item)
-                                                            <option value="{{ $item->id }}">{{ $item->nama }}
+                                                    <label class="label">Jumlah Pemesanan</label>
+                                                    <input type="number" class="form-control" name="jumlah_order"
+                                                        id="jumlah" oninput="updateTotal()" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="label">Pengiriman Dari</label>
+                                                    <select name="origin" id="origin" class="form-control" disabled>
+                                                        @foreach ($cities as $city)
+                                                            <!-- Ganti $asalkota dengan $cities -->
+                                                            <option value="{{ $city['city_name'] }}"
+                                                                {{ $city['city_id'] == $defaultCity['city_id'] ? 'selected' : '' }}>
+                                                                {{ $city['city_name'] }}
                                                             </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="label">Kota Tujuan Pengiriman</label>
-                                                    <select name="kota_id" id="kota_id" class="form-control"
+                                                    <select name="destination" id="destination" class="form-control select2"
                                                         onchange="updateOngkir()">
+                                                        <option value=""></option>
                                                         @foreach ($kota as $item)
-                                                            <option value="{{ $item->id }}"
-                                                                data-ongkir="{{ $item->biaya_ongkir }}">
-                                                                {{ $item->nama }}</option>
+                                                            <option value="{{ $item['city_name'] }}">
+                                                                {{ $item['city_name'] }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label class="label">Biaya Ongkir / Kg</label>
-                                                    <input type="text" class="form-control" id="ongkir" value="0"
-                                                        readonly>
+                                                    <label class="label">Kurir</label>
+                                                    <select name="courier" id="courier" class="form-control select2"
+                                                        onchange="updateOngkir()">
+                                                        <option value=""></option>
+                                                        <option value="jne">JNE</option>
+                                                        <option value="pos">POS</option>
+                                                        <option value="tiki">TIKI</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label class="label">Jumlah Pemesanan / Kg</label>
-                                                    <input type="number" class="form-control" name="jumlah_order"
-                                                        id="jumlah" oninput="updateTotal()" required>
+                                                    <label class="label">Biaya Ongkir</label>
+                                                    <input type="text" class="form-control" id="ongkir"
+                                                        value="0" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -107,15 +124,16 @@
                                                     <label class="label">Total Bayar = Harga Produk + Biaya
                                                         Ongkir.</label>
                                                     Rp.
-                                                    <input type="text" class="form-control" name="total" id="total"
-                                                        readonly>
+                                                    <input type="text" class="form-control" name="total"
+                                                        id="total" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="label">Metode Transaksi</label>
                                                     <select name="metode" id="metode" class="form-control">
-                                                        <option value="COD">COD</option>
+                                                        <option value=""></option>
+                                                        <option value="QRIS">QRIS</option>
                                                         <option value="TRANSFER">TRANSFER</option>
                                                     </select>
                                                 </div>
@@ -147,6 +165,9 @@
                                                         id="status" value="Pending" readonly>
                                                     <input type="hidden" class="form-control" name="user_id"
                                                         id="user_id" value="{{ auth()->user()->id }}" readonly>
+
+                                                    <input type="hidden" class="form-control" name="weight"
+                                                        value="1500">
                                                     <input type="submit" value="Order Sekarang" class="btn btn-primary">
                                                     <div class="submitting"></div>
                                                 </div>

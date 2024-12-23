@@ -73,7 +73,7 @@ class ProdukController extends Controller
         $norek = Kontak::where('nama', '=', 'NOREK')->orderBy('id', 'desc')->get();
         $kontak = Kontak::orderBy('id', 'desc')->get();
         $medsos = Medsos::orderBy('id', 'desc')->get();
-        $kota = Kota::orderBy('id', 'desc')->get();
+        // $kota = Kota::orderBy('id', 'desc')->get();
         $ekspedisi = Ekspedisi::orderBy('id', 'desc')->get();
         // Wajib
         // Mendapatkan ID user yang sedang login
@@ -84,6 +84,14 @@ class ProdukController extends Controller
 
         // Menghasilkan kode unik
         $kodeUnik = $this->generateUniqueCode('ORDER', 8);
+        $origin = 151;
+        $destination = 156;
+        $weight = 1700;
+        $courier = 'jne';
+        $ongkir = $this->getOngkir($origin, $destination, $weight, $courier);
+        $asalkota = $this->getAsalKota();
+        // dd($asalkota);
+        $kota = $this->getKota();
 
         // Menyiapkan data untuk dikirimkan ke tampilan
         $data = [
@@ -96,6 +104,8 @@ class ProdukController extends Controller
             'kontak' => $kontak,
             'norek' => $norek,
             'medsos' => $medsos,
+            'cities' => $asalkota['cities'], // Menggunakan 'cities' yang berisi daftar kota
+            'defaultCity' => $asalkota['default_city'],
             'kota' => $kota,
             'ekspedisi' => $ekspedisi,
         ];
@@ -156,10 +166,55 @@ class ProdukController extends Controller
             return redirect()->back()->withInput()->withErrors("Something Error !");
         }
     }
+    public function getAsalKota()
+    {
+        $client = new Client(['verify' => false]); // Abaikan verifikasi SSL
+
+        $response = $client->get('https://api.rajaongkir.com/starter/city', [
+            'headers' => [
+                'key' => env('RAJAONGKIR_API_KEY'),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ]
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+
+        $cities = $body['rajaongkir']['results'];
+
+        // Cari kota default dengan city_id: 206
+        $defaultCity = collect($cities)->firstWhere('city_id', 206);
+
+        return [
+            'cities' => $cities,
+            'default_city' => $defaultCity,
+        ];
+    }
+
+
+    public function getKota()
+    {
+        $client = new Client([
+            'verify' => false, // Abaikan verifikasi SSL
+        ]);
+
+        $response = $client->get('https://api.rajaongkir.com/starter/city', [
+            'headers' => [
+                'key' => env('RAJAONGKIR_API_KEY'),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ]
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+
+        // Mengembalikan semua kota
+        return $body['rajaongkir']['results'];
+    }
 
     public function getOngkir($origin, $destination, $weight, $courier)
     {
-        $client = new Client();
+        $client = new Client([
+            'verify' => false, // Abaikan verifikasi SSL
+        ]);
         $response = $client->post('https://api.rajaongkir.com/starter/cost', [
             'headers' => [
                 'key' => env('RAJAONGKIR_API_KEY'),
@@ -176,40 +231,4 @@ class ProdukController extends Controller
         $body = json_decode($response->getBody(), true);
         return $body['rajaongkir']['results'][0]['costs'];
     }
-    // public function kirimnotif($id, $total)
-    // {
-    //     $data['kontak'] = Kontak::orderBy('id', 'desc')->get();
-    //     $data['norek'] = Norek::orderBy('id', 'desc')->get();
-    //     $waAdmin = User::where('jab_id', 1)->first();
-    //     $row = User::findOrFail($id);
-    //     $kumpulan_data = [];
-    //     // $data['phone'] = $row->no_wa;
-    //     $data['phone'] = $waAdmin->no_wa;
-    //     $data['message'] = 'Hi Admin, Ada Pesanan ni dari ' . $row->name . ' Dengan No WA  : https://wa.me/62' . $row->no_wa . ' Di cek Ya Di aplikasi nya . Total Pembelian : Rp ' . $total . '';
-    //     $data['secret'] = false;
-    //     $data['retry'] = false;
-    //     $data['isGroup'] = false;
-    //     array_push($kumpulan_data, $data);
-    //     WablasTrait::sendText($kumpulan_data);
-
-    //     return $kumpulan_data;
-    //     //  $row = User::findOrFail($id);
-    //     // $url = 'https://wa.me/'.$row->no_wa.'?text=Halo%20'.$row->name.'%20tagihan%20SPP%20anda%20telah%20jatuh%20tempo';
-    //     // return $url;
-    // }
-
-    // public function kirim_email($id, $total)
-    // {
-    //     $data['kontak'] = Kontak::orderBy('id', 'desc')->get();
-    //     $data['norek'] = Norek::orderBy('id', 'desc')->get();
-
-    //     $row = User::findOrFail($id);
-
-    //     $data = [
-    //         'name' => $row->name,
-    //         'body' => 'Hi ' . $row->name . ' Email ' . $row->email . ' dan WA ' . $row->no_wa . ' lakukan pembayaran sebesar Rp. ' . $total . ' Di Aplikasi bendoarab.com',
-    //     ];
-    //     Mail::to($row->email)->send(new SendEmail($data));
-    //     return $data;
-    // }
 }
