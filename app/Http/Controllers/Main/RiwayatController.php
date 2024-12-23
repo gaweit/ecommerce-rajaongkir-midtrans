@@ -80,9 +80,12 @@ class RiwayatController extends Controller
      */
     public function edit(string $id)
     {
+        // wajib
+        $userId = auth()->user()->name;
+        $data['title'] = "Bayar $userId";
         $data['kontak'] = Kontak::orderBy('id', 'desc')->get();
-        $data['icon'] = "";
-        $data['title'] = "Upload Bukti Bayar";
+        $data['medsos'] = Medsos::orderBy('id', 'desc')->get();
+        // wajib
         $data['result'] = Order::with('user', 'produk')
             ->findOrFail($id);
         return view("main.riwayat.edit", $data);
