@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ url('seogram') }}/assets/css/bootstrap.css">
     <link rel="stylesheet" href="{{ url('seogram') }}/assets/vendor/animate/animate.css">
     <link rel="stylesheet" href="{{ url('seogram') }}/assets/css/theme.css">
-    <link rel="shortcut icon" href="{{ url('storage') }}/padi.png" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url('icon.webp') }}" type="image/x-icon">
 
     {{-- data table --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -26,14 +26,14 @@
                 @guest
                     <a href="{{ url('/') }}" class="navbar-brand">
                         {{-- <img style="width: 10%" src="{{ url('storage') }}/padi.png" alt="Logo"> --}}
-                        Hasil<span class="text-primary">Tani.</span>
+                        E<span class="text-primary">Commerce</span>
                     </a>
                 @endguest
                 @auth
 
                     <a href="{{ url('main/home') }}" class="navbar-brand">
-                        {{-- <img style="width: 10%" src="{{ url('storage') }}/padi.png" alt="Logo"> --}}
-                        Hasil<span class="text-primary">Tani.</span>
+                        {{-- <img style="width: 10%" src="{{ url('storage') }}/padipng" alt="Logo"> --}}
+                        E<span class="text-primary">Commerce</span>
                     </a>
                 @endauth
                 <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent"
@@ -79,10 +79,15 @@
             <div class="container">
                 <div class="row mb-5">
                     <div class="col-lg-5 py-3">
-                        <h3>HasilTani</h3>
-                        <p>Menyediakan hasil pertanian segar dan berkualitas langsung dari petani lokal. Kami
-                            berkomitmen untuk mendukung pertanian yang berkelanjutan dan membawa kebaikan alam ke meja
-                            Anda. Temukan produk segar dan alami yang dipetik dengan cermat dan dikirim dengan hati.
+                        <h3>Selamat Datang</h3>
+                        <p>Temukan segala kebutuhan Anda di satu tempat! Kami adalah destinasi belanja online yang
+                            menawarkan berbagai produk berkualitas, mulai dari fashion, elektronik, hingga perlengkapan
+                            rumah tangga. Dengan koleksi yang selalu diperbarui dan harga yang bersaing, kami
+                            berkomitmen untuk memberikan pengalaman berbelanja yang mudah dan menyenangkan. Jelajahi
+                            berbagai kategori produk kami dan nikmati penawaran menarik setiap harinya. Belanja sekarang
+                            dan temukan produk yang tepat untuk Anda!
+
+                            .
                         </p>
                     </div>
                     <div class="col-lg-3 py-3">
