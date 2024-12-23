@@ -63,7 +63,7 @@
                                     href="{{ url('main/produk') }}">Produk</a> </li>
                             <li class="nav-item "> <a class="nav-link" href="#kontak">Kontak</a> </li>
                             <li class="nav-item {{ Request::is('main/riwayat*') ? 'active' : '' }}"> <a class="nav-link"
-                                    href="{{ url('main/riwayat') }}">Riwayat Pemesanan</a> </li>
+                                    href="{{ url('main/riwayat') }}">Keranjang</a> </li>
                             <li class="nav-item"> <a class="btn btn-primary ml-lg-2" href="{{ url('logout') }}">Logout</a>
                             </li>
                         </ul>
