@@ -61,6 +61,9 @@ Route::prefix('/main')->middleware('auth')->group(function () {
     Route::post('produk', [ProdukController::class, 'processOrder']);
 
     // riwayat
+    // Route::post('/payment-notification', 'RiwayatController@paymentNotification');
+    Route::post('/payment-notification', [RiwayatController::class, 'paymentNotification']);
+
     Route::post('riwayat/selesai/{id}', [RiwayatController::class, 'selesai'])->name('riwayat.selesai');
     Route::resource('riwayat', RiwayatController::class);
     Route::get('pdf/{order}', PdfController::class)->name('pdf');
